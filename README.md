@@ -37,14 +37,20 @@ Moreover, reverse engineering is a mentally demanding activity, due to requiring
 
 In reverse order of completion:
 
-- `Virus.DOS.BadBoy.1000.a`: interesting memory-resident COM-infector (**WIP**)
+- `Virus.DOS.BadBoy.1000.a`: memory-resident COM-infector
+  - highlights:
+    - the virus body is split in blocks, which are stored (encrypted) in a randomly mixed layout
+    - bypasses Int 13 monitors, if present
 - `Virus.DOS.LoveChild.488`: unremarkable memory-resident COM-infector
   - highlights: it resides in the upper half of the interrupt table; it uses an undocumented DOS 3.30 feature to hijack Int 21
 - `Virus.DOS.Tiny.163.a`: unremarkable memory-resident COM-infector
   - highlights: it resides in a memory area which is unused after boot
-- `Virus.Boot.Stoned.March6.t`: unremarkable, but very famous (under the name "Michelangelo"), variant of Stoned
-- `Virus.Boot.Stoned.a`: unremarkable, but very famous, boot infector
-- `Virus.DOS.November17.855.a`: unremarkable, but competently written, memory-resident, COM/EXE infector; was widespread in my home country (Italy)
+- `Virus.Boot.Stoned.March6.t`: unremarkable variant of Stoned
+  - highlights: very famous, under the name "Michelangelo"
+- `Virus.Boot.Stoned.a`: unremarkable boot infector
+  - highlights: very famous
+- `Virus.DOS.November17.855.a`: unremarkable, but competently written, memory-resident, COM/EXE infector
+  - highlights: none, but widespread in Italy
 
 # Workflow and tools #
 
@@ -59,36 +65,29 @@ By using such "normalized" version, the ASM recompiled binary will match exactly
 List of potentially interesting viruses, in order of complexity:
 
 - small (size <= 1k)
-  - int13 (512) [VB 199103]
+  - int13 (512): interesting stealth [VB 199103]
   - 666 (512): interesting cluster infection; sophisticated stealth [VB 199005]
-  - rage (575) [VB 199110]
-  - italian (578) [VB 198911]
-  - suriv 1.01/402 (~800) [VB 198908]
-  - typo (867) [VB 199004]
   - dir ii (1024): interesting infection [VB 199111]
 - mid  (1K <= size <= 2k)
-  - violator (1055) [VB 199104]
-  - datacrime (1168) [VB ?]
   - vacsina (earlier yankeedoodle) (1206)
   - 1260 (~1.2k): first poly; anti-debug [VB 199003]
   - cascade (1701): technically advanced
-  - caterpillar (~1700)
-  - jerusalem (~1800)
+  - caterpillar (~1700): armored
+  - jerusalem (~1800): historical
   - mix-1 (1.6k): interesting mem routine; a few payloads [VB 198912]
 - mid/large   (2k <= size <= 3k)
-  - flip (2153): multipartite; targets av; stealth; armoured; technically advanced
+  - flip (2153): multipartite; targets av; stealth; armoured; technically advanced [VB 199009]
   - tequila (2400)
   - uruguay v3/5 (2.5k/2.7k)
   - invisible man (2.9k)
   - yankeedoodle (later vacsina) (2.9k+) v33+: self-correcting code; v50+: protected mode
-  - traceback (3k) [VB ?]
 - large (3k+)
   - onehalf (3.5k)
-  - commander bomber (4k)
-  - tremor [4k]
+  - commander bomber (4k): inserts in the middle of the host
+  - tremor (4k): stealth, etc.
   - frodo/4k: lots of stealth [VB ?]
   - fish #6 (4k, frodo variant): armoured [? VB]
   - uruguay v6 (4.9k+)
   - whale (9k)
   - ssr (18k)
-  - ACG (?, C?): metamorphic
+  - ACG (?, C?): metamorphic [VB 199907]
