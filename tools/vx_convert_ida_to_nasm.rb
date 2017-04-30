@@ -20,10 +20,13 @@ class MadConvertIdaSourceToNasm
     /^(\w+)  (.*)/  => 'l\1:\2',           # 8. anything else
 
     /.*public start\n/     => '',
-    /.*start.*proc near\n/ => '',
-    /.*start +endp\n/      => '',
+    /.*end start$\n?/      => '',
+    /.*start +proc (near|)far\n/ => '',
+    /.* +endp( +;.*)?\n/   => '',
     /.*seg\d+ +ends\n/     => '',
     /.*assume .s:.*\n/     => '',
+
+    /.*?(\w+) +proc near( +;.*)?$/ => '     \1:\2',
 
     # Holy ****!!
     #
