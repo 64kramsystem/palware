@@ -54,11 +54,20 @@ In reverse order of completion:
 
 # Workflow and tools #
 
-The virus sources are mainly the VX Heaven collection and Open Malware. The binaries are disassembled via IDA Pro, converted to a NASM-compatible format (via `vx_convert_ida_to_nasm.rb`), and recompiled into a reference binary; finally,  they're statically analyzed.
+The virus sources are mainly the VX Heaven collection and Open Malware.
 
-The reference binary is used for verification during the analysis; the disassembled ASM file is compiled and compared to it via `vx_compare.sh`, to make sure that no errors are introduced, particulary in the conversion of numbers to identifiers (and operations).
+The binaries are disassembled via IDA Pro, and converted/processed to a NASM-compatible format (via `vx_convert_ida_to_nasm.rb`), which is then statically analyzed.
 
-By using such "normalized" version, the ASM recompiled binary will match exactly - if it would be instead compared against the original, irrelevant differences would always be found, due to assemblers producing different, although equivalent, opcodes.
+Before the first research session, the disassembly is compiled back into a "reference" binary, whose purpose is to make sure that no errors are introduced while researching, in particular, in the conversion of numbers to identifiers/operations.
+
+The `vx_compare.sh` script assembles the disassembly, and performs a binary comparison against the reference file,
+then visualizes a comparison of the differences, if any is found.
+
+The original file can't be used as reference, because the assembler introduces differences (without functional effects) due to different opcodes which can be used to encode the same instruction, eg:
+
+    (33FF) xor di,di <> (31FF) xor di,di
+
+the reference file has such changes already introduced, so comparing against it will not show them.
 
 # Candidates for disassembly #
 
