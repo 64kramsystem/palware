@@ -1,5 +1,7 @@
 # Introduction #
 
+**WARNING!: This project is on hold! Reverse engineering DOS malware is fun, but it's very time consuming, and I can't dedicate time to it now.**
+
 Palware: Paleolitic Malware disassemblies!
 
 This repository contains my disassemblies of DOS viruses.
