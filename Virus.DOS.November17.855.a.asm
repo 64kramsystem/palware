@@ -91,9 +91,9 @@ check_if_current_mcb_is_last:
 
 decrease_free_memory:
 
-      MOV  AX, [DI+3]                             ; length of the MCB; the end is the top of memory
+      MOV  AX, [DI+3]                             ; size of memory block in paragraphs; the end address of this block is the top of memory
       SUB  AX, k_resident_memory_paragraphs       ; reserve memory
-      SUB  WORD [DI+12h], k_resident_memory_paragraphs
+      SUB  WORD [DI+12h], k_resident_memory_paragraphs ; PSP = MCB+10h → MCB+12h = PSP+2 = address of new top of memory
       MOV  [DI+3], AX                             ; decrease the memory available
       INC  BX
       ADD  AX, BX
