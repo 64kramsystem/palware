@@ -102,3 +102,6 @@ List of potentially interesting viruses, in order of complexity:
   - whale (9k)
   - ssr (18k)
   - ACG (?, C?): metamorphic [VB 199907]
+  - RDA.Fighter
+
+Getting ideas from Virus Bulletin could also be interesting.
