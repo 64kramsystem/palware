@@ -39,6 +39,8 @@ Moreover, reverse engineering is a mentally demanding activity, due to requiring
 
 In reverse order of completion:
 
+- `Virus.DOS.SillyOR.81`: trivial trojan
+  - new disasm style, performed with Ghidra
 - `Virus.DOS.BadBoy.1000.a`: memory-resident COM-infector
   - highlights:
     - the virus body is split in blocks, which are stored (encrypted) in a randomly mixed layout
