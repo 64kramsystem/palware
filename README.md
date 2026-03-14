@@ -14,7 +14,6 @@ This repository contains my disassemblies of DOS viruses.
 - [Why reverse engineering \[DOS viruses\]?](#why-reverse-engineering-dos-viruses)
 - [Current disassemblies](#current-disassemblies)
 - [Workflow and tools](#workflow-and-tools)
-- [Candidates for disassembly](#candidates-for-disassembly)
 
 ## Is this (potentially) dangerous?
 
@@ -39,72 +38,27 @@ Moreover, reverse engineering is a mentally demanding activity, due to requiring
 
 In reverse order of completion:
 
-- `Virus.DOS.Trivial.Ymir.101`: trivial trojan
-- `Virus.DOS.SillyOR.81`: trivial trojan
-  - new disasm style, performed with Ghidra
-- `Virus.DOS.BadBoy.1000.a`: memory-resident COM-infector
-  - highlights:
-    - the virus body is split in blocks, which are stored (encrypted) in a randomly mixed layout
-    - bypasses Int 13 monitors, if present
-- `Virus.DOS.LoveChild.488`: unremarkable memory-resident COM-infector
-  - highlights: it resides in the upper half of the interrupt table; it uses an undocumented DOS 3.30 feature to hijack Int 21
-- `Virus.DOS.Tiny.163.a`: unremarkable memory-resident COM-infector
-  - highlights: it resides in a memory area which is unused after boot
-- `Virus.Boot.Stoned.March6.t`: unremarkable variant of Stoned
-  - highlights: very famous, under the name "Michelangelo"
-- `Virus.Boot.Stoned.a`: unremarkable boot infector
-  - highlights: very famous
-- `Virus.DOS.November17.855.a`: unremarkable, but competently written, memory-resident, COM/EXE infector
-  - highlights: none, but widespread in Italy
+- `Virus.DOS.Trivial.Ymir.101` [t]
+- `Virus.DOS.SillyOR.81` [t]: testing ground for Ghidra-based analysis
+- `Virus.DOS.BadBoy.1000.a` [rc]: splits the virus body in blocks, which are stored (encrypted) in a randomly mixed layout; bypasses Int 13 monitors, if present
+- `Virus.DOS.LoveChild.488` [rc]: resides in the upper half of the interrupt table; uses an undocumented DOS 3.30 feature to hijack Int 21
+- `Virus.DOS.Tiny.163.a` [rc]: resides in a memory area which is unused after boot
+- `Virus.Boot.Stoned.March6.t` [rb]: Very famous Stoned variant, known as "Michelangelo"
+- `Virus.Boot.Stoned.a` [rb]: very famous
+- `Virus.DOS.November17.855.a` [rce]: widespread in Italy
+
+Legenda:
+
+- Memory `r`esident
+- `b`oot infector
+- `c`OM infector
+- `e`XE infector
+- `t`rojan
 
 ## Workflow and tools
 
-The virus sources are mainly the VX Heaven collection and Open Malware.
+Previously, the viruses were disassembled via IDA Pro, then the listing exported and manually annotated in a text editor, then tested (for accuracy) with some scripts.
 
-The binaries are disassembled via IDA Pro, and converted/processed to a NASM-compatible format (via `vx_convert_ida_to_nasm.rb`), which is then statically analyzed.
+Nowadays, the whole analysis is performed with Ghidra, and the project exported to XML and ASM.
 
-Before the first research session, the disassembly is compiled back into a "reference" binary, whose purpose is to make sure that no errors are introduced while researching, in particular, in the conversion of numbers to identifiers/operations.
-
-The `vx_compare.sh` script assembles the disassembly, and performs a binary comparison against the reference file,
-then visualizes a comparison of the differences, if any is found.
-
-The original file can't be used as reference, because the assembler introduces differences (without functional effects) due to different opcodes which can be used to encode the same instruction, eg:
-
-    (33FF) xor di,di <> (31FF) xor di,di
-
-the reference file has such changes already introduced, so comparing against it will not show them.
-
-## Candidates for disassembly
-
-List of potentially interesting viruses, in order of complexity:
-
-- small (size <= 1k)
-  - int13 (512): interesting stealth [VB 199103]
-  - 666 (512): interesting cluster infection; sophisticated stealth [VB 199005]
-  - dir ii (1024): interesting infection [VB 199111]
-- mid  (1K <= size <= 2k)
-  - vacsina (earlier yankeedoodle) (1206)
-  - 1260 (~1.2k): first poly; anti-debug [VB 199003]
-  - cascade (1701): technically advanced
-  - caterpillar (~1700): armored
-  - jerusalem (~1800): historical
-  - mix-1 (1.6k): interesting mem routine; a few payloads [VB 198912]
-- mid/large   (2k <= size <= 3k)
-  - flip (2153): multipartite; targets av; stealth; armoured; technically advanced [VB 199009]
-  - tequila (2400)
-  - uruguay v3/5 (2.5k/2.7k)
-  - invisible man (2.9k)
-  - yankeedoodle (later vacsina) (2.9k+) v33+: self-correcting code; v50+: protected mode
-- large (3k+)
-  - onehalf (3.5k)
-  - commander bomber (4k): inserts in the middle of the host
-  - tremor (4k): stealth, etc.
-  - frodo/4k: lots of stealth [VB ?]
-  - fish #6 (4k, frodo variant): armoured [? VB]
-  - uruguay v6 (4.9k+)
-  - whale (9k)
-  - ssr (18k)
-  - ACG (?, C?): metamorphic [VB 199907]
-  - RDA.Fighter
-
-Getting ideas from Virus Bulletin could also be interesting.
+In both cases, the malware is statically analyzed.
