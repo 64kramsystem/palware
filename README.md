@@ -38,6 +38,7 @@ Moreover, reverse engineering is a mentally demanding activity, due to requiring
 
 In reverse order of completion:
 
+- `Virus.DOS.LptOff.256` [rca]: disables printing; resides in an unused MS-DOS area (upper IVT table)
 - `Virus.DOS.Trivial.Ymir.101` [t]
 - `Virus.DOS.SillyOR.81` [t]: testing ground for Ghidra-based analysis
 - `Virus.DOS.BadBoy.1000.a` [rc]: splits the virus body in blocks, which are stored (encrypted) in a randomly mixed layout; bypasses Int 13 monitors, if present
@@ -54,6 +55,7 @@ Legenda:
 - `c`OM infector
 - `e`XE infector
 - `t`rojan
+- `a`ppending
 
 ## Workflow and tools
 
