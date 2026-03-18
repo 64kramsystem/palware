@@ -38,6 +38,7 @@ Moreover, reverse engineering is a mentally demanding activity, due to requiring
 
 In reverse order of completion:
 
+- `Virus.DOS.Synergy.288` [rca]: resides in the MDA or CGA video buffer area; the sample seems to be corrupted
 - `Virus.DOS.LptOff.256` [rca]: disables printing; resides in an unused MS-DOS area (upper IVT table)
 - `Virus.DOS.Trivial.Ymir.101` [t]
 - `Virus.DOS.SillyOR.81` [t]: testing ground for Ghidra-based analysis
