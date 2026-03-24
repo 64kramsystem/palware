@@ -38,6 +38,7 @@ Moreover, reverse engineering is a mentally demanding activity, due to requiring
 
 In reverse order of completion:
 
+- `Virus.DOS.Butterfly.298.a` [dc]: Unremarkable; analyzed in VB 199403
 - `Virus.Boot.Azusa.a` [rb]
 - `Virus.DOS.LptOff.256` [rca]: disables printing; resides in an unused MS-DOS area (upper IVT table)
 - `Virus.DOS.Trivial.Ymir.101` [t]
@@ -52,6 +53,7 @@ In reverse order of completion:
 Legenda:
 
 - Memory `r`esident
+- `d`irect infector
 - `b`oot infector
 - `c`OM infector
 - `e`XE infector
