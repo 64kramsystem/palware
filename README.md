@@ -64,6 +64,6 @@ Legenda:
 
 Previously, the viruses were disassembled via IDA Pro, then the listing exported and manually annotated in a text editor, then tested (for accuracy) with some scripts.
 
-Nowadays, the whole analysis is performed with Ghidra, and the project exported to XML and ASM.
+Nowadays, the whole analysis is performed with Ghidra, and the project exported to ASM.
 
 In both cases, the malware is statically analyzed.
