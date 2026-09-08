@@ -24,7 +24,7 @@ File body:100...b4fe            MOV         AH,MAGIC_NUMBER
 File body:100...cd21            INT         0x21
 File body:100...fec4            INC         AH
 File body:100...7452            JZ          RETURN_TO_HOST
-                            ;The MDA (Monochrome Display Adapter) decodes a 32KB region from B000:0000 to B7FF:000F, though only the first 4KB is actual video RAM (mirrored through the full range). This region is present only when an MDA card is installed. On systems with a CGA or VGA adapter but no MDA, this region is typically unmapped and free for use.
+                            ;Probe B000:0000 by writing and reading a word. An unmapped region is not writable storage, and this probe alone does not identify the video adapter.
 File body:100...b800b0          MOV         AX,0xb000
 File body:100...8ec0            MOV         ES,AX
 File body:100...8ed8            MOV         DS,AX
@@ -32,15 +32,15 @@ File body:100...33ff            XOR         DI,DI
 File body:100...89fe            MOV         SI,DI
 File body:100...ab              STOSW       ES:DI=>MDA video buffer:MDA_VIDEO_BUFFER;Write AX, and re-read it.
 File body:100...ad              LODSW       SI=>MDA video buffer:MDA_VIDEO_BUFFER   ;= ??
-                            ;The typical behavior of the hardware of that era was for unmapped regions to read as 0xFF or 0xFFFF, due to the data bus lines being left floating with no hardware driving them to a defined value — capacitance from the last bus cycle pulls them high.
+                            ;The next branch treats FFFFh readback as the fallback case; floating-bus values are hardware-dependent.
 File body:100...40              INC         AX
 File body:100...0e              PUSH        CS
 File body:100...1f              POP         DS
-File body:100...7503            JNZ         COMPUTE_DESTINATION                     ;Memory is mapped → MDA is present → ...
-File body:100...b801b8          MOV         AX,0xb801                               ;Memory not mapped → Install after th...
+File body:100...7503            JNZ         COMPUTE_DESTINATION                     ;Readback was not FFFFh; this does not prove an MDA is present
+File body:100...b801b8          MOV         AX,0xb801                               ;Fallback seed when the probe returned FFFFh
                             COMPUTE_DESTINATION:          ;XREF[1]:     1000:0128(j)
 File body:100...05c907          ADD         AX,0x7c9
-File body:100...8ec0            MOV         ES,AX                                   ;=B7D0 (MDA) or BFCA (CGA), + 100h by...
+File body:100...8ec0            MOV         ES,AX                                   ;B7CAh for B000h readback (B001h + 07C9h), or BFCAh for FFFFh readback
 File body:100...50              PUSH        AX
 File body:100...50              PUSH        AX
 File body:100...8db60001        LEA         SI,[BP + RUNTIME_START]                 ;Starts copying a few bytes before th...

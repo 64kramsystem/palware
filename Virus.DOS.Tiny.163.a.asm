@@ -89,7 +89,7 @@ new_int21:
             push cx
             push ds
 
-            mov ax,3D92h                      ; open for r/w, deny-write sharing mode, no inherit
+            mov ax,3D92h                      ; open for r/w, deny read/write sharing mode, no inherit
                                               ; DX points to filename from intercepted INT 21h/4Bh call
             int 21h
             mov bx,ax

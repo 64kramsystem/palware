@@ -7,7 +7,7 @@ Int 21h vecto...                dw          ??
                             INT_21H_SEG:                  ;XREF[1]:     1000:01b1(*)
 Int 21h vecto...                dw          ??
                             INT_17H_HANDLER:
-Virus residen...b400            MOV         AH,0x0                                  ;Disable printer! AH=0 → Success
+Virus residen...b400            MOV         AH,0x0                                  ;Suppress BIOS printer operations; return status 0 (busy and not selected), not generic success
 Virus residen...cf              IRET
                             INT_21H_HANDLER:              ;XREF[1]:     1000:01ab(*)
 Virus residen...9c              PUSHF
@@ -36,7 +36,7 @@ Virus residen...7445            JZ          CLOSE_FILE
 Virus residen...b80242          MOV         AX,SEEK_TO_FILE_END
 Virus residen...33c9            XOR         CX,CX
 Virus residen...33d2            XOR         DX,DX
-Virus residen...cd21            INT         0x21                                    ;On success, AX=file size
+Virus residen...cd21            INT         0x21                                    ;On success, DX:AX=file size; the following comparisons use only AX
 Virus residen...3de7fe          CMP         AX,MAX_INFECTABLE_SIZE
 Virus residen...7737            JA          CLOSE_FILE
 Virus residen...8bc8            MOV         CX,AX

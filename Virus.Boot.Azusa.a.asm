@@ -336,7 +336,7 @@ Resident body:9fc0:008e  000000000...    db[60]
    |_Resident body:9fc0:00c8  [58]            db          0h
    |_Resident body:9fc0:00c9  [59]            db          0h
                                      CONTINUE_BOOT:                ;XREF[1]:     0000:7cc5(*)
-Resident body:9fc0:00ca  31c0            XOR         AX,AX                                                       ;Reset floppy disk controller
+Resident body:9fc0:00ca  31c0            XOR         AX,AX                                                       ;Reset the drive selected by the inherited DL value
 Resident body:9fc0:00cc  cd13            INT         0x13
 Resident body:9fc0:00ce  31c0            XOR         AX,AX
 Resident body:9fc0:00d0  8ec0            MOV         ES,AX
@@ -391,7 +391,7 @@ Resident body:9fc0:0133  cd13            INT         0x13
                                      EXIT_SEARCH:                  ;XREF[1]:     9fc0:012c(j)
 Resident body:9fc0:0135  c3              RET
                                      PAYLOAD_TEST:                 ;XREF[1]:     9fc0:00e2(c)
-Resident body:9fc0:0136  f6066f01e0      TEST        byte ptr [PAYLOAD_COUNTER],0xe0                             ;Top 3 bits set?
+Resident body:9fc0:0136  f6066f01e0      TEST        byte ptr [PAYLOAD_COUNTER],0xe0                             ;Any of bits 5-7 set? The test does not require all three
 Resident body:9fc0:013b  7515            JNZ         RUN_PAYLOAD
 Resident body:9fc0:013d  80066f0101      ADD         byte ptr [PAYLOAD_COUNTER],0x1
 Resident body:9fc0:0142  b80103          MOV         AX,WRITE_SECTOR
@@ -406,8 +406,8 @@ Resident body:9fc0:0150  eb0e            JMP         PAYLOAD_EXIT
 Resident body:9fc0:0152  31c0            XOR         AX,AX
 Resident body:9fc0:0154  8ed8            MOV         DS,AX
                                      DISABLE_PORTS:                ;XREF[1,1]:   9fc0:0167(*),9fc0:0167(*)
-Resident body:9fc0:0156  c606080400      MOV         byte ptr [LPT base I/O port addresses:LPT1],0x0             ;Disable LPT1 (sets invalid address)
-Resident body:9fc0:015b  c606000400      MOV         byte ptr [COM base I/O port addresses:COM1],0x0             ;Disable COM1
+Resident body:9fc0:0156  c606080400      MOV         byte ptr [LPT base I/O port addresses:LPT1],0x0             ;Clear only the low byte of the BIOS LPT1 address; the high byte is unchanged
+Resident body:9fc0:015b  c606000400      MOV         byte ptr [COM base I/O port addresses:COM1],0x0             ;Clear only the low byte of the BIOS COM1 address; the high byte is unchanged
                                      PAYLOAD_EXIT:                 ;XREF[1]:     9fc0:0150(j)
 Resident body:9fc0:0160  0e              PUSH        CS
 Resident body:9fc0:0161  1f              POP         DS

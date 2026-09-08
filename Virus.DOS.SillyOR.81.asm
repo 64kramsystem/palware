@@ -29,7 +29,7 @@ ram:0000:0135   ba0001          MOV         DX,VIRUS_START
 ram:0000:0138   cd21            INT         0x21
 ram:0000:013a   1f              POP         DS
 ram:0000:013b   61              POPA
-ram:0000:013c   ca0200          RETF        0x2                                     ;Same as IRET (Interrupt return)
+ram:0000:013c   ca0200          RETF        0x2                                     ;Pop IP and CS, discard saved FLAGS; current FLAGS are not restored as by IRET
 ram:0000:013f   286329203...    ds          "(c) 1999 MBR Labs"
                             VIRUS_END:                    ;XREF[1]:     0000:0114(*)
 ram:0000:0151   00              ??          00h

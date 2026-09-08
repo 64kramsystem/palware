@@ -261,8 +261,8 @@ File body:1000:0109      e80000          CALL        FIND_BASE_ADDRESS
                                      FIND_BASE_ADDRESS:            ;XREF[1]:     1000:0109(j)
 File body:1000:010c      5d              POP         BP
                                      ;************************************************************************************************************************************************************
-                                     ;*  Bug: operand should be 0x10c                                                                                                                            *
-                                     ;*  Analysis will assume the correct value                                                                                                                  *
+                                     ;*  The recorded SUB leaves BP one byte beyond the relocation base.                                                                                         *
+                                     ;*  Symbol names describe intended objects; effective BP-relative addresses retain this discrepancy.                                                        *
                                      ;************************************************************************************************************************************************************
 File body:1000:010d      81ed0b01        SUB         BP,0x10b
                                      RESTORE_ORIG_ENTRY_POINT:
@@ -282,7 +282,7 @@ File body:1000:0135      52              PUSH        DX
 File body:1000:0136      eb30            JMP         INVOKE_FILE_SEARCH
                                      EXIT_PROCEDURE:               ;XREF[1]:     1000:0209(j)
 File body:1000:0138      b41a            MOV         AH,SET_DTA
-File body:1000:013a      ba8000          MOV         DX,PSP:DOS_PSP_1000_0000.cmdtail_len                        ;Should set 0x81 instead of 0x80
+File body:1000:013a      ba8000          MOV         DX,PSP:DOS_PSP_1000_0000.cmdtail_len                        ;Restore the default DTA at PSP:0080h; 0081h is the command-tail text
 File body:1000:013d      cd21            INT         0x21
 File body:1000:013f      bcfeff          MOV         SP,0xfffe
 File body:1000:0142      bd0001          MOV         BP,COM_ENTRY_POINT

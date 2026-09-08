@@ -145,7 +145,7 @@ allocate_memory:
                         mov     ax, es
                         sub     ax, allocated_memory_segments
                         mov     es, ax
-                        mov     [10h + psp_top_of_current_program_segment], ax ; ds = cs - 10h
+                        mov     [10h + psp_top_of_current_program_segment], ax ; DS = CS - 1 paragraph; PSP begins at DS:0010h
 
                         push    cs
                         pop     ds
