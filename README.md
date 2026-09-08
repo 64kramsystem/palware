@@ -23,8 +23,7 @@ There are several reasons:
 
 1. DOS viruses don't infect modern operating systems; theoretically boot viruses could, but nobody uses floppies anymore;
 2. the files are disassemblies, not binaries; ill-intentioned users would need to assemble them first, which is not worth, as other websites already provide live samples (eg. Open Malware);
-3. destructive (disk overwriting) code has been removed (even if it wouldn't work on contemporary operating systems anyway);
-4. Mikko Hypponen [does it](https://archive.org/details/malwaremuseum), so do I!
+3. Mikko Hypponen [does it](https://archive.org/details/malwaremuseum), so do I!
 
 ## Why reverse engineering [DOS viruses]?
 
@@ -36,19 +35,21 @@ Moreover, reverse engineering is a mentally demanding activity, due to requiring
 
 ## Current disassemblies
 
-In reverse order of completion:
+Most recent first:
 
-- `Virus.DOS.Butterfly.298.a` [dc]: Unremarkable; analyzed in VB 199403
-- `Virus.Boot.Azusa.a` [rb]
-- `Virus.DOS.LptOff.256` [rca]: disables printing; resides in an unused MS-DOS area (upper IVT table)
-- `Virus.DOS.Trivial.Ymir.101` [t]
-- `Virus.DOS.SillyOR.81` [t]: testing ground for Ghidra-based analysis
-- `Virus.DOS.BadBoy.1000.a` [rc]: splits the virus body in blocks, which are stored (encrypted) in a randomly mixed layout; bypasses Int 13 monitors, if present
-- `Virus.DOS.LoveChild.488` [rc]: resides in the upper half of the interrupt table; uses an undocumented DOS 3.30 feature to hijack Int 21
-- `Virus.DOS.Tiny.163.a` [rc]: resides in a memory area which is unused after boot
-- `Virus.Boot.Stoned.March6.t` [rb]: Very famous Stoned variant, known as "Michelangelo"
-- `Virus.Boot.Stoned.a` [rb]: very famous
-- `Virus.DOS.November17.855.a` [rce]: widespread in Italy
+| Disassembly                  | Classification | Notes                                                                                                                          |
+| ---------------------------- | :------------: | ------------------------------------------------------------------------------------------------------------------------------ |
+| `Virus.DOS.Butterfly.298.a`  |       dc       | Unremarkable; analyzed in VB 199403                                                                                            |
+| `Virus.Boot.Azusa.a`         |       rb       |                                                                                                                                |
+| `Virus.DOS.LptOff.256`       |      rca       | disables printing; resides in an unused MS-DOS area (upper IVT table)                                                          |
+| `Virus.DOS.Trivial.Ymir.101` |       t        |                                                                                                                                |
+| `Virus.DOS.SillyOR.81`       |       t        | testing ground for Ghidra-based analysis                                                                                       |
+| `Virus.DOS.BadBoy.1000.a`    |       rc       | splits the virus body in blocks, which are stored (encrypted) in a randomly mixed layout; bypasses Int 13 monitors, if present |
+| `Virus.DOS.LoveChild.488`    |       rc       | resides in the upper half of the interrupt table; uses an undocumented DOS 3.30 feature to hijack Int 21                       |
+| `Virus.DOS.Tiny.163.a`       |       rc       | resides in a memory area which is unused after boot                                                                            |
+| `Virus.Boot.Stoned.March6.t` |       rb       | Very famous Stoned variant, known as "Michelangelo"                                                                            |
+| `Virus.Boot.Stoned.a`        |       rb       | very famous                                                                                                                    |
+| `Virus.DOS.November17.855.a` |      rce       | widespread in Italy                                                                                                            |
 
 Legenda:
 
@@ -59,11 +60,11 @@ Legenda:
 - `e`XE infector
 - `t`rojan
 - `a`ppending
+- `s`tealth
+- `o`ligomorphic (fixed set of decoder templates)
 
 ## Workflow and tools
 
-Previously, the viruses were disassembled via IDA Pro, then the listing exported and manually annotated in a text editor, then tested (for accuracy) with some scripts.
-
-Nowadays, the whole analysis is performed with Ghidra, and the project exported to ASM.
-
-In both cases, the malware is statically analyzed.
+- Old disassemblies were performed via IDA Pro, then the listing exported and manually annotated in a text editor, then tested for accuracy with some scripts (static analysis only)
+- Afterwards, the whole analysis was performed with Ghidra, and the project exported to ASM (static analysis only)
+- Disassemblies from 2026 onwards, are AI-automated
