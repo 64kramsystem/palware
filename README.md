@@ -39,6 +39,7 @@ Most recent first:
 
 | Disassembly                  | Classification | Notes                                                                                                                          |
 | ---------------------------- | :------------: | ------------------------------------------------------------------------------------------------------------------------------ |
+| `Virus.DOS.Whale`            |     rceso      | Extremely armored                                                                                                              |
 | `Virus.DOS.Butterfly.298.a`  |       dc       | Unremarkable; analyzed in VB 199403                                                                                            |
 | `Virus.Boot.Azusa.a`         |       rb       |                                                                                                                                |
 | `Virus.DOS.LptOff.256`       |      rca       | disables printing; resides in an unused MS-DOS area (upper IVT table)                                                          |
