@@ -1,3 +1,5 @@
+> **Archived:** This project is archived. The idea behind it is now part of the [oldware project](https://github.com/64kramsystem/oldware).
+
 ## Introduction
 
 Palware: Paleolitic Malware disassemblies!
