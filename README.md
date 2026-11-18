@@ -40,6 +40,7 @@ Moreover, reverse engineering is a mentally demanding activity, due to requiring
 
 In reverse order of completion:
 
+- `Virus.DOS.Whale` [rceaAo]: (AI-annotated) well-known for its extreme armouring (multi-layer self-modifying encryption and anti-debugging)
 - `Virus.DOS.Butterfly.298.a` [dc]: Unremarkable; analyzed in VB 199403
 - `Virus.Boot.Azusa.a` [rb]
 - `Virus.DOS.LptOff.256` [rca]: disables printing; resides in an unused MS-DOS area (upper IVT table)
@@ -61,6 +62,8 @@ Legenda:
 - `e`XE infector
 - `t`rojan
 - `a`ppending
+- `A`rmored
+- `o`ligomorphic
 
 ## Workflow and tools
 
